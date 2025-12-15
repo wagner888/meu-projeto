@@ -353,7 +353,7 @@ function manterParams(array $novos = []): string {
                 <i class="fas fa-arrow-left"></i>
             </button>
             <h1><i class="fas fa-chart-line"></i> Painel de Consulta de Testes em Campo</h1>
-            <p>Análise detalhada dos testes realizados pelos testers</p>
+            <p>Análise detalhada dos testes realizados pelos testers.</p>
         </div>
 
         <form method="GET" class="filters" id="filterForm">
