@@ -4,6 +4,9 @@ if (!isset($_SESSION['tester_nome'])) {
     $_SESSION['tester_nome'] = 'Tester Exemplo';
 }
 
+// Detectar página atual
+$paginaAtual = basename($_SERVER['PHP_SELF'], '.php');
+
 // Configuração do banco
 try {
     $pdo = new PDO("mysql:host=localhost;dbname=wagner;charset=utf8mb4", 'root', '');
@@ -108,74 +111,166 @@ function manterParams(array $novos = []): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Consulta de Testes em Campo</title>
+    <title>Consulta de Testes - E-Pratika</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
             --primary: #ff8c42;
+            --light: #ffd9b3;
             --dark: #e65c00;
-            --green: #00cc00;
-            --light-green: #009900;
-            --blue: #4d88ff;
-            --dark-blue: #1a66ff;
-            --red: #ff4d4d;
-            --dark-red: #cc0000;
+            --green: #00e68a;
             --bg: #fffaf0;
             --text: #2c1810;
             --shadow: rgba(255, 140, 66, 0.2);
+            --menu-bg: #1a1a2e;
+            --menu-hover: #16213e;
+            --red: #ff4d4d;
             --border: #ffe0c2;
+            --blue: #4d88ff;
+            --dark-blue: #1a66ff;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd9b3 0%, #ff8c42 50%, #e65c00 100%);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 20px;
+        body{
+            font-family:'Poppins',sans-serif;
+            background:linear-gradient(135deg,#ffd9b3 0%,#ff8c42 50%,#e65c00 100%);
+            min-height:100vh;
+            color:var(--text);
+            padding:0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px var(--shadow);
-        }
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
+        
+        /* MENU SUPERIOR */
+        .top-menu {
+            background: var(--menu-bg);
             color: white;
-            padding: 30px 25px;
-            text-align: center;
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+        .menu-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .menu-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+        }
+        .menu-logo i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        .menu-logo span {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .menu-nav {
+            display: flex;
+            justify-content: center;
+            flex: 1;
+        }
+        .menu-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 0;
+        }
+        .menu-nav li {
+            margin: 0;
+        }
+        .menu-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            border-radius: 0;
             position: relative;
         }
-        .btn-voltar {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.4rem;
-            transition: all 0.3s;
-        }
-        .btn-voltar:hover {
-            background: rgba(255,255,255,0.4);
-            transform: translateY(-50%) scale(1.1);
-        }
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .header p {
+        .menu-nav a i {
             font-size: 1.1rem;
-            opacity: 0.95;
+        }
+        .menu-nav a:hover {
+            background: var(--menu-hover);
+            color: var(--primary);
+        }
+        .menu-nav a.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* USER INFO E LOGOUT */
+        .menu-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .user-info i {
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+        .user-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .btn-logout {
+            background: rgba(255, 77, 77, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 77, 77, 0.4);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .btn-logout:hover {
+            background: var(--red);
+            border-color: var(--red);
+            transform: translateY(-2px);
+        }
+        .container{
+            max-width:1100px;
+            width: 100%;
+            margin:30px auto;
+            background:white;
+            border-radius:24px;
+            overflow:hidden;
+            box-shadow:0 20px 50px var(--shadow);
+        }
+        .header{
+            background:linear-gradient(135deg,#ff8c42 0%,#e65c00 100%);
+            color:white;
+            padding:20px 20px;
+            text-align:center;
         }
 
         .filters { background: #fff5eb; padding: 25px; border-bottom: 1px solid var(--border); }
@@ -195,7 +290,7 @@ function manterParams(array $novos = []): string {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; transition: all 0.3s;
         }
         .btn-filter { background: linear-gradient(135deg, var(--blue), var(--dark-blue)); color: white; box-shadow: 0 6px 15px rgba(77, 136, 255, 0.3); flex: 1; }
-        .btn-clear { background: linear-gradient(135deg, var(--red), var(--dark-red)); color: white; box-shadow: 0 6px 15px rgba(255, 77, 77, 0.3); flex: 1; }
+        .btn-clear { background: linear-gradient(135deg, #dc3545, #c82333); color: white; box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3); flex: 1; border: 2px solid #dc3545; }
         .btn-filter:hover, .btn-clear:hover { transform: translateY(-2px); }
 
         .results { padding: 25px; }
@@ -256,13 +351,14 @@ function manterParams(array $novos = []): string {
         th i.fa-sort-up, th i.fa-sort-down { opacity: 1; color: #fff; }
         td { padding: 14px 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
         tr:hover { background: #fff8f0; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block; text-align: center; white-space: nowrap; }
         .badge-full { background: #d4edda; color: #155724; }
         .badge-lite { background: #fff3cd; color: #856404; }
         .btn-view {
             background: linear-gradient(135deg, var(--blue), var(--dark-blue));
             color: white; border: none; padding: 8px 16px; border-radius: 8px;
-            font-size: 0.9rem; cursor: pointer; transition: all 0.3s;
+            font-size: 0.9rem; cursor: pointer; transition: all 0.3s; display: inline-block;
+            text-align: center; white-space: nowrap; text-decoration: none;
         }
         .btn-view:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(77,136,255,0.4); }
 
@@ -321,8 +417,62 @@ function manterParams(array $novos = []): string {
 
         .no-results { text-align: center; color: #b34a00; font-style: italic; padding: 40px; background: #fff8f0; border-radius: 12px; margin-top: 20px; }
         .no-results i { font-size: 3rem; color: var(--primary); margin-bottom: 15px; display: block; }
-
+        .section-title{
+            font-size:1.6rem;color:#e65c00;margin-bottom:25px;font-weight:600;
+            border-bottom:2px solid #ffe0c2;padding-bottom:10px;
+        }
+        
+        @media (max-width: 1200px) {
+            .menu-container {
+                max-width: 90%;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .menu-nav a {
+                padding: 18px 15px;
+                font-size: 0.85rem;
+                gap: 6px;
+            }
+            .menu-nav a i {
+                font-size: 1rem;
+            }
+        }
+        
         @media (max-width: 768px) {
+            .menu-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 10px;
+            }
+            .menu-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .menu-nav a {
+                padding: 12px 15px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+            }
+            .menu-right {
+                flex-direction: column;
+                width: 100%;
+            }
+            .user-info {
+                width: 100%;
+                justify-content: center;
+            }
+            .btn-logout {
+                width: 100%;
+                justify-content: center;
+            }
+            .container {
+                margin: 15px;
+                border-radius: 16px;
+            }
+            .header {
+                padding: 15px;
+            }
             .filter-row { grid-template-columns: 1fr; }
             .filter-actions { flex-direction: column; width: 100%; }
             .btn-filter, .btn-clear { width: 100%; flex: none; }
@@ -341,19 +491,62 @@ function manterParams(array $novos = []): string {
                 justify-content: flex-start;
             }
             table { display: block; overflow-x: auto; }
-            .header h1 { font-size: 1.8rem; }
-            .btn-voltar { position: static; transform: none; margin-bottom: 15px; }
+        }
+        
+        @media (max-width: 576px) {
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- MENU SUPERIOR -->
+    <nav class="top-menu">
+        <div class="menu-container">
+            <div class="menu-logo">
+                <i class="fas fa-vial"></i>
+                <span>E-Pratika</span>
+            </div>
+            
+            <nav class="menu-nav">
+                <ul>
+                    <li><a href="testet" class="<?= $paginaAtual == 'testet' ? 'active' : '' ?>">
+                        <i class="fas fa-plus-circle"></i> Novo Teste
+                    </a></li>
+                    <li><a href="consultatestes" class="<?= $paginaAtual == 'consultatestes' ? 'active' : '' ?>">
+                        <i class="fas fa-search"></i> Consultar
+                    </a></li>
+                    <li><a href="consultatestes" class="<?= $paginaAtual == 'relatorios' ? 'active' : '' ?>">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </a></li>
+                    <li><a href="dashboard" class="<?= $paginaAtual == 'dashboard' ? 'active' : '' ?>">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                    <li><a href="configuracoes" class="<?= $paginaAtual == 'configuracoes' ? 'active' : '' ?>">
+                        <i class="fas fa-cog"></i> Configurações
+                    </a></li>
+                    <li><a href="usuarios" class="<?= $paginaAtual == 'usuarios' ? 'active' : '' ?>">
+                        <i class="fas fa-users"></i> Usuários
+                    </a></li>
+                </ul>
+            </nav>
+            
+            <div class="menu-right">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name"><?= htmlspecialchars($_SESSION['tester_nome']) ?></span>
+                </div>
+                <a href="logout.php" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="header">
-            <button class="btn-voltar" onclick="history.back()" title="Voltar">
-                <i class="fas fa-arrow-left"></i>
-            </button>
-            <h1><i class="fas fa-chart-line"></i> Painel de Consulta de Testes em Campo</h1>
-            <p>Análise detalhada dos testes realizados pelos testers.</p>
+            <!-- Header mantido apenas para o background color, mas sem conteúdo -->
         </div>
 
         <form method="GET" class="filters" id="filterForm">
@@ -407,7 +600,8 @@ function manterParams(array $novos = []): string {
             </div>
         </form>
 
-        <div class="results">
+        <div style="padding:35px;">
+            <h2 class="section-title">Consulta de Testes</h2>
             <div class="stats-row">
                 <div class="stats">
                     <span><i class="fas fa-database"></i> <strong><?= number_format($totalRegistros, 0, ',', '.') ?></strong> teste(s) encontrado(s)</span>
@@ -451,11 +645,11 @@ function manterParams(array $novos = []): string {
                         <th><i class="fas fa-fingerprint"></i> E-Biométrica</th>
                         <th><i class="fas fa-rocket"></i> Launcher</th>
                         <th><i class="fas fa-magic"></i> Magisk</th>
-                        <th onclick="ordenar('umed_tipo')">
+                         <th onclick="ordenar('umed_tipo')" style="text-align: center; white-space: nowrap;">
                             <i class="fas fa-microchip"></i> Umed
                             <?= $ordemColuna === 'umed_tipo' ? ($ordemDirecao === 'ASC' ? '<i class="fas fa-sort-up"></i>' : '<i class="fas fa-sort-down"></i>') : '<i class="fas fa-sort"></i>' ?>
                         </th>
-                        <th><i class="fas fa-eye"></i> Ações</th>
+                        <th style="text-align: center; white-space: nowrap;"><i class="fas fa-eye"></i> Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -468,14 +662,14 @@ function manterParams(array $novos = []): string {
                         <td><?= htmlspecialchars($t['versao_ebiometrica']) ?></td>
                         <td><?= htmlspecialchars($t['versao_launcher']) ?></td>
                         <td><?= htmlspecialchars($t['versao_magisk']) ?></td>
-                        <td>
+<td style="text-align: center;">
                             <span class="badge <?= $t['umed_tipo'] == 'Full' ? 'badge-full' : 'badge-lite' ?>">
                                 <?= $t['umed_tipo'] == 'Full' ? 'Umed Full' : 'Umed Lite' ?>
                             </span>
                         </td>
-                        <td>
-                            <a href="visualizar_teste.php?id=<?= $t['id'] ?>" class="btn-view" title="Visualizar detalhes">
-                                <i class="fas fa-eye"></i> Visualizar
+                        <td style="text-align: center;">
+                            <a href="relatorios.php?id=<?= $t['id'] ?>" class="btn-view" title="Ver relatórios">
+                                <i class="fas fa-chart-bar"></i> Visualizar
                             </a>
                         </td>
                     </tr>
@@ -543,10 +737,6 @@ function manterParams(array $novos = []): string {
     </div>
 
     <script>
-        function limparFiltros() {
-            window.location.href = window.location.pathname;
-        }
-
         function limparFiltros() {
             window.location.href = window.location.pathname;
         }

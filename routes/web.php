@@ -12,19 +12,31 @@ Route::get('/login', function () {
 });
 
 Route::get('/teste', function () {
-    return view('teste');
+    return view('teste');   
 });
 
 Route::get('/novoteste', function () {
     return view('novoteste');
 });
 
+Route::get('/main', function () {
+    return view('main');
+});
+
 Route::get('/login', function () {
     return view('login');
 });
 
-Route::get('/consultapainel', function () {
-    return view('consultapainel');
+Route::get('/testet', function () {
+    return view('testet');
+});
+
+Route::get('/consultatestes', function () {
+    return view('consultatestes');
+});
+
+Route::get('/relatorios', function () {
+    return view('relatorios');
 });
 
 Route::get('/dashboard', function () {
